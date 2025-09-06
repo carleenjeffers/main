@@ -58,11 +58,11 @@ public class XMLValidator
 		// element contains attributes:  attribute, attribute2
 		//
 		XMLValidator	xmlValidator	= new XMLValidator();
-		ValidChildren	schemaElement	= schemaManager.addSchemaElement(null);
+		ValidChildren	schemaElement	= xmlValidator.schemaManager.addSchemaElement(null);
 		schemaElement.addValidChild("document", false);
-		schemaElement	= schemaManager.addSchemaElement("document");
+		schemaElement	= xmlValidator.schemaManager.addSchemaElement("document");
 		schemaElement.addValidChild("element", false);
-		schemaElement	= schemaManager.addSchemaElement("element");
+		schemaElement	= xmlValidator.schemaManager.addSchemaElement("element");
 		schemaElement.addValidChild("element", false);
 		schemaElement.addValidChild("attribute", true);
 		schemaElement.addValidChild("attribute2", true);
