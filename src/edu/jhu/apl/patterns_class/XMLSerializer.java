@@ -57,28 +57,31 @@ public class XMLSerializer
 		//   </element>
 		// </document>
 		//
+
+		// use standard DOM factory
+		DOMFactory factory = new StandardDOMFactory();
 		edu.jhu.apl.patterns_class.dom.replacement.Document	document	=
-		  DOMFactory.createDocument();
-		edu.jhu.apl.patterns_class.dom.replacement.Element	root		= document.createElement("document");
+		  factory.createDocument();
+		edu.jhu.apl.patterns_class.dom.replacement.Element	root		= factory.createElement("document", document);
 		document.appendChild(root);
 
-		edu.jhu.apl.patterns_class.dom.replacement.Element	child		= document.createElement("element");
-		edu.jhu.apl.patterns_class.dom.replacement.Attr		attr		= document.createAttribute("attribute");
+		edu.jhu.apl.patterns_class.dom.replacement.Element	child		= factory.createElement("element", document);
+		edu.jhu.apl.patterns_class.dom.replacement.Attr		attr		= factory.createAttribute("attribute", document);
 		attr.setValue("attribute value");
 		child.setAttributeNode(attr);
 		root.appendChild(child);
 
-		child	= document.createElement("element");
+		child	= factory.createElement("element", document);
 		root.appendChild(child);
 
-		child	= document.createElement("element");
+		child	= factory.createElement("element", document);
 		child.setAttribute("attribute", "attribute value");
 		child.setAttribute("attribute2", "attribute2 value");
-		edu.jhu.apl.patterns_class.dom.replacement.Text		text		= document.createTextNode("Element Value");
+		edu.jhu.apl.patterns_class.dom.replacement.Text		text		= factory.createTextNode("Element Value", document);
 		child.appendChild(text);
 		root.appendChild(child);
 
-		child	= document.createElement("element");
+		child	= factory.createElement("element", document);
 		root.appendChild(child);
 
 		//

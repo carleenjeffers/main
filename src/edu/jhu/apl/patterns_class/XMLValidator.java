@@ -54,15 +54,18 @@ public class XMLValidator
 		schemaElement.addValidChild("attribute2", true);
 		schemaElement.setCanHaveText(true);
 
+		// use validated DOM factory
+		DOMFactory factory = new ValidatedDOMFactory(xmlValidator.schemaManager);
+
 		edu.jhu.apl.patterns_class.dom.replacement.Document	document	=
-		  DOMFactory.createValidatedDocument(xmlValidator.schemaManager);
+		  factory.createDocument();
 		edu.jhu.apl.patterns_class.dom.replacement.Element	root		= null;
 		edu.jhu.apl.patterns_class.dom.replacement.Element	child		= null;
 		edu.jhu.apl.patterns_class.dom.replacement.Attr		attr		= null;
 
 		// demonstrate proper validation via Decorator
 		try {
-			root = DOMFactory.createValidatedElement("element", document, xmlValidator.schemaManager);
+			root = factory.createElement("element", document);
 			document.appendChild(root);
 			System.out.print("Failed to catch invalid operation!");
 		} catch (InvalidSchemaOperationException e) {
@@ -70,29 +73,29 @@ public class XMLValidator
 		}
 		
 		try {
-			root = DOMFactory.createValidatedElement("document", document, xmlValidator.schemaManager);
+			root = factory.createElement("document", document);
 			document.appendChild(root);
 
-			child = DOMFactory.createValidatedElement("element", document, xmlValidator.schemaManager);
-			attr	= document.createAttribute("attribute");
+			child = factory.createElement("element", document);
+			attr	= factory.createAttribute("attribute", document);
 			attr.setValue("attribute value");
 			child.setAttributeNode(attr); // child validates canAddAttribute
 
 			root.appendChild(child); // root validates canAddElement
 
-			child = DOMFactory.createValidatedElement("element", document, xmlValidator.schemaManager);
+			child = factory.createElement("element", document);
 			root.appendChild(child);
 
-			child = DOMFactory.createValidatedElement("element", document, xmlValidator.schemaManager);
+			child = factory.createElement("element", document);
 			child.setAttribute("attribute", "attribute value");
 			child.setAttribute("attribute2", "attribute2 value");
 
-			edu.jhu.apl.patterns_class.dom.replacement.Text text = document.createTextNode("Element Value");
+			edu.jhu.apl.patterns_class.dom.replacement.Text text = factory.createTextNode("Element Value", document);
 			child.appendChild(text);
 			root.appendChild(child);
 
 			// empty element
-			child = DOMFactory.createValidatedElement("element", document, xmlValidator.schemaManager);
+			child = factory.createElement("element", document);
 			root.appendChild(child);
 
 		} catch (InvalidSchemaOperationException e) {

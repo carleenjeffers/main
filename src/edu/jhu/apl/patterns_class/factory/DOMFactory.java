@@ -6,15 +6,22 @@ import edu.jhu.apl.patterns_class.decorator.*;
 
 public interface DOMFactory {
 
-    public static edu.jhu.apl.patterns_class.dom.replacement.Document createDocument() {
+    public default edu.jhu.apl.patterns_class.dom.replacement.Document createDocument() {
         return new edu.jhu.apl.patterns_class.dom.Document();
     }
 
-    public static edu.jhu.apl.patterns_class.dom.replacement.Document createValidatedDocument(SchemaManager schemaManager) {
-        return new DocumentValidationDecorator(createDocument(), schemaManager);
+    public default edu.jhu.apl.patterns_class.dom.replacement.Element createElement(
+        String tagName, edu.jhu.apl.patterns_class.dom.replacement.Document document) throws org.w3c.dom.DOMException {
+        return document.createElement(tagName);
     }
 
-    public static edu.jhu.apl.patterns_class.dom.replacement.Element createValidatedElement(String tagName, edu.jhu.apl.patterns_class.dom.replacement.Document document, SchemaManager schemaManager) {
-        return new ElementValidationDecorator(document.createElement(tagName), schemaManager);
+    public default edu.jhu.apl.patterns_class.dom.replacement.Attr createAttribute(
+        String name, edu.jhu.apl.patterns_class.dom.replacement.Document document) throws org.w3c.dom.DOMException {
+        return document.createAttribute(name);
+    }
+
+    public default edu.jhu.apl.patterns_class.dom.replacement.Text createTextNode(
+        String data, edu.jhu.apl.patterns_class.dom.replacement.Document document) throws org.w3c.dom.DOMException {
+        return document.createTextNode(data);
     }
 }
