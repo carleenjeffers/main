@@ -58,7 +58,7 @@ public class XMLSerializer
 		// </document>
 		//
 		edu.jhu.apl.patterns_class.dom.replacement.Document	document	=
-		  DOMFactory.createValidatedDocument();
+		  DOMFactory.createDocument();
 		edu.jhu.apl.patterns_class.dom.replacement.Element	root		= document.createElement("document");
 		document.appendChild(root);
 

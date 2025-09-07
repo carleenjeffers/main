@@ -1,13 +1,14 @@
 package edu.jhu.apl.patterns_class.decorator;
 
-import edu.jhu.apl.patterns_class.schema.ValidChildren;
+import edu.jhu.apl.patterns_class.schema.*;
 import edu.jhu.apl.patterns_class.dom.replacement.*;
+import edu.jhu.apl.patterns_class.exception.InvalidSchemaOperationException;
 
 public class ElementValidationDecorator extends NodeValidationDecorator implements Element {
     protected final Element decoratedElement;
 
-    public ElementValidationDecorator(Node node, java.util.Vector<ValidChildren> schema) {
-        super(node, schema);
+    public ElementValidationDecorator(Node node, SchemaManager schemaManager) {
+        super(node, schemaManager);
 
         // ensure node is element
         if (!(node instanceof Element)) {
@@ -16,6 +17,62 @@ public class ElementValidationDecorator extends NodeValidationDecorator implemen
 
         this.decoratedElement = (Element) node;
     }
+
+    // add validation to setAttributeNode
+    @Override
+    public Attr setAttributeNode(Attr newAttr) {
+        if (!canAddAttribute(newAttr.getName())) {
+            throw new InvalidSchemaOperationException();
+        }
+
+        return decoratedElement.setAttributeNode(newAttr);
+    };
+
+    @Override
+    public void setAttribute(String name, String value) {
+        if (!canAddAttribute(name)) {
+            throw new InvalidSchemaOperationException();
+        }
+
+        decoratedElement.setAttribute(name, value);
+    }
+
+    @Override
+    public Node	appendChild(edu.jhu.apl.patterns_class.dom.replacement.Node newChild) throws org.w3c.dom.DOMException {
+        short type = newChild.getNodeType();
+
+        switch (type) {
+            case org.w3c.dom.Node.ELEMENT_NODE:
+                if (!canAddElement(decoratedElement, newChild.getNodeName())) {
+                    throw new InvalidSchemaOperationException();
+                }
+                break;
+            case org.w3c.dom.Node.TEXT_NODE:
+                if (!canAddText()) {
+                    throw new InvalidSchemaOperationException();
+                }
+                break;
+            default:
+                break;
+        }
+
+        return decoratedElement.appendChild(newChild);
+    }
+
+    // validation helpers
+    private boolean canAddAttribute(String newAttribute)
+	{
+		ValidChildren	schemaElement	= schemaManager.findSchemaElement(decoratedElement.getTagName());
+
+		return schemaElement == null ? true : schemaElement.childIsValid(newAttribute, true);
+	}
+
+    private boolean canAddText()
+	{
+		ValidChildren	schemaElement	= schemaManager.findSchemaElement(decoratedElement.getTagName());
+
+		return schemaElement == null ? true : schemaElement.canHaveText();
+	}
 
     // element specific override functions
     @Override
@@ -32,10 +89,6 @@ public class ElementValidationDecorator extends NodeValidationDecorator implemen
     public void removeAttribute(String name) { decoratedElement.removeAttribute(name); };
 	@Override
     public Attr removeAttributeNode(Attr oldAttr) { return decoratedElement.removeAttributeNode(oldAttr); };
-	@Override
-    public void setAttribute(String name, String value) { decoratedElement.setAttribute(name, value); };
-	@Override
-    public Attr setAttributeNode(Attr newAttr) { return decoratedElement.setAttributeNode(newAttr); };
 
 	//
 	// Unimplemented Element members.

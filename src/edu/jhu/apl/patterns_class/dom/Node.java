@@ -1,5 +1,7 @@
 package edu.jhu.apl.patterns_class.dom;
 
+import edu.jhu.apl.patterns_class.decorator.*;
+
 public class Node implements edu.jhu.apl.patterns_class.dom.replacement.Node
 {
 	private String		name		= null;
@@ -117,6 +119,7 @@ public class Node implements edu.jhu.apl.patterns_class.dom.replacement.Node
 		// TODO:  Do readonly checks on this node and current parent of newChild.  NO_MODIFICATION_ALLOWED_ERR
 		// TODO:  Exclude child types not permitted for this element here.  HIERARCHY_REQUEST_ERR
 
+		newChild = unwrapNode(newChild);
 		if (newChild.getOwnerDocument() != getOwnerDocument())
 			throw new org.w3c.dom.DOMException(org.w3c.dom.DOMException.WRONG_DOCUMENT_ERR,
 			  "New Child is not a part of this document.");
@@ -129,6 +132,20 @@ public class Node implements edu.jhu.apl.patterns_class.dom.replacement.Node
 
 		return newChild;
 	}
+
+	// unwrap helper
+	private Node unwrapNode(edu.jhu.apl.patterns_class.dom.replacement.Node node) {
+		while (node instanceof NodeValidationDecorator) {
+			node = ((NodeValidationDecorator) node).getNode();
+		}
+
+		if (!(node instanceof Node)) {
+        throw new IllegalArgumentException("Expected concrete Node implementation");
+    }
+
+    	return (Node) node;
+	}
+
 	public boolean hasChildNodes()					{ return nodes.size() > 0; }
 	public String getLocalName()					{ return name; }
 

@@ -1,15 +1,20 @@
 package edu.jhu.apl.patterns_class.factory;
 
-import edu.jhu.apl.patterns_class.schema.ValidChildren;
+import edu.jhu.apl.patterns_class.schema.*;
 import edu.jhu.apl.patterns_class.dom.*;
 import edu.jhu.apl.patterns_class.decorator.*;
 
-public class DOMFactory {
-    public static DocumentValidationDecorator createValidatedDocument() {
-        return new DocumentValidationDecorator(new edu.jhu.apl.patterns_class.dom.Document(), new java.util.Vector<ValidChildren>());
+public interface DOMFactory {
+
+    public static edu.jhu.apl.patterns_class.dom.replacement.Document createDocument() {
+        return new edu.jhu.apl.patterns_class.dom.Document();
     }
 
-    public static ElementValidationDecorator createValidatedElement(String tagName, Document document) {
-        return new ElementValidationDecorator(document.createElement(tagName), new java.util.Vector<ValidChildren>());
+    public static edu.jhu.apl.patterns_class.dom.replacement.Document createValidatedDocument(SchemaManager schemaManager) {
+        return new DocumentValidationDecorator(createDocument(), schemaManager);
+    }
+
+    public static edu.jhu.apl.patterns_class.dom.replacement.Element createValidatedElement(String tagName, edu.jhu.apl.patterns_class.dom.replacement.Document document, SchemaManager schemaManager) {
+        return new ElementValidationDecorator(document.createElement(tagName), schemaManager);
     }
 }

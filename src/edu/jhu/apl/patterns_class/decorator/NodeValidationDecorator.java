@@ -14,9 +14,14 @@ public abstract class NodeValidationDecorator implements edu.jhu.apl.patterns_cl
     protected Node decoratedNode;
     SchemaManager schemaManager;
 
-    public NodeValidationDecorator(Node node, java.util.Vector<ValidChildren> schema) {
+    public NodeValidationDecorator(Node node, SchemaManager schemaManager) {
         this.decoratedNode = node;
-        this.schemaManager = new SchemaManager(schema);
+        this.schemaManager = schemaManager;
+    }
+
+    // helper for getting concrete Node
+    public Node getNode() {
+        return this.decoratedNode;
     }
 
     //
@@ -51,7 +56,7 @@ public abstract class NodeValidationDecorator implements edu.jhu.apl.patterns_cl
 	@Override
     public Node	removeChild(Node oldChild) throws org.w3c.dom.DOMException { return decoratedNode.removeChild(oldChild); };
 	@Override
-    public Node	appendChild(Node newChild) throws org.w3c.dom.DOMException { return decoratedNode.appendChild(newChild); };
+    public Node	appendChild(edu.jhu.apl.patterns_class.dom.replacement.Node newChild) throws org.w3c.dom.DOMException { return decoratedNode.appendChild(newChild); };
 	@Override
     public boolean	hasChildNodes() { return decoratedNode.hasChildNodes(); };
 	@Override

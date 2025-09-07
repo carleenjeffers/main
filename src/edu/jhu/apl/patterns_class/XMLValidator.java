@@ -10,20 +10,6 @@ public class XMLValidator
 {
 	SchemaManager schemaManager = new SchemaManager(new java.util.Vector<ValidChildren>());
 
-	public boolean canAddText(edu.jhu.apl.patterns_class.dom.replacement.Element element)
-	{
-		ValidChildren	schemaElement	= schemaManager.findSchemaElement(element.getTagName());
-
-		return schemaElement == null ? true : schemaElement.canHaveText();
-	}
-
-	public boolean canAddAttribute(edu.jhu.apl.patterns_class.dom.replacement.Element element, String newAttribute)
-	{
-		ValidChildren	schemaElement	= schemaManager.findSchemaElement(element.getTagName());
-
-		return schemaElement == null ? true : schemaElement.childIsValid(newAttribute, true);
-	}
-
 	//
 	// Optional for schema implementation:
 	//
@@ -69,113 +55,48 @@ public class XMLValidator
 		schemaElement.setCanHaveText(true);
 
 		edu.jhu.apl.patterns_class.dom.replacement.Document	document	=
-		  DOMFactory.createValidatedDocument();
+		  DOMFactory.createValidatedDocument(xmlValidator.schemaManager);
 		edu.jhu.apl.patterns_class.dom.replacement.Element	root		= null;
 		edu.jhu.apl.patterns_class.dom.replacement.Element	child		= null;
 		edu.jhu.apl.patterns_class.dom.replacement.Attr		attr		= null;
 
+		// demonstrate proper validation via Decorator
 		try {
-			root	= document.createValidatedElement("document");
+			root = DOMFactory.createValidatedElement("element", document, xmlValidator.schemaManager);
 			document.appendChild(root);
+			System.out.print("Failed to catch invalid operation!");
+		} catch (InvalidSchemaOperationException e) {
+			System.out.println("Successfully caught invalid operation.");
+		}
+		
+		try {
+			root = DOMFactory.createValidatedElement("document", document, xmlValidator.schemaManager);
+			document.appendChild(root);
+
+			child = DOMFactory.createValidatedElement("element", document, xmlValidator.schemaManager);
+			attr	= document.createAttribute("attribute");
+			attr.setValue("attribute value");
+			child.setAttributeNode(attr); // child validates canAddAttribute
+
+			root.appendChild(child); // root validates canAddElement
+
+			child = DOMFactory.createValidatedElement("element", document, xmlValidator.schemaManager);
+			root.appendChild(child);
+
+			child = DOMFactory.createValidatedElement("element", document, xmlValidator.schemaManager);
+			child.setAttribute("attribute", "attribute value");
+			child.setAttribute("attribute2", "attribute2 value");
+
+			edu.jhu.apl.patterns_class.dom.replacement.Text text = document.createTextNode("Element Value");
+			child.appendChild(text);
+			root.appendChild(child);
+
+			// empty element
+			child = DOMFactory.createValidatedElement("element", document, xmlValidator.schemaManager);
+			root.appendChild(child);
 
 		} catch (InvalidSchemaOperationException e) {
 			System.out.println("Attempted invalid schema operation: " + e.getMessage());
-			System.exit(0);
-		}
-
-		if (xmlValidator.canRootElement("document"))
-		{
-			root	= document.createElement("document");
-			document.appendChild(root);
-		}
-		else
-		{
-			System.out.println("Attempted invalid schema operation.");
-			System.exit(0);
-		}
-
-		if (xmlValidator.canAddElement(root, "element"))
-		{
-			child	= document.createElement("element");
-
-			if (xmlValidator.canAddAttribute(child, "attribute"))
-			{
-				attr	= document.createAttribute("attribute");
-				attr.setValue("attribute value");
-				child.setAttributeNode(attr);
-			}
-			else
-			{
-				System.out.println("Attempted invalid schema operation.");
-				System.exit(0);
-			}
-
-			root.appendChild(child);
-		}
-		else
-		{
-			System.out.println("Attempted invalid schema operation.");
-			System.exit(0);
-		}
-
-		if (xmlValidator.canAddElement(root, "element"))
-		{
-			child	= document.createElement("element");
-			root.appendChild(child);
-		}
-		else
-		{
-			System.out.println("Attempted invalid schema operation.");
-			System.exit(0);
-		}
-
-		if (xmlValidator.canAddElement(root, "element"))
-		{
-			child	= document.createElement("element");
-
-			if (xmlValidator.canAddAttribute(child, "attribute"))
-				child.setAttribute("attribute", "attribute value");
-			else
-			{
-				System.out.println("Attempted invalid schema operation.");
-				System.exit(0);
-			}
-
-			if (xmlValidator.canAddAttribute(child, "attribute2"))
-				child.setAttribute("attribute2", "attribute2 value");
-			else
-			{
-				System.out.println("Attempted invalid schema operation.");
-				System.exit(0);
-			}
-
-			if (xmlValidator.canAddText(child))
-			{
-				edu.jhu.apl.patterns_class.dom.replacement.Text text = document.createTextNode("Element Value");
-				child.appendChild(text);
-			}
-			else
-			{
-				System.out.println("Attempted invalid schema operation.");
-				System.exit(0);
-			}
-
-			root.appendChild(child);
-		}
-		else
-		{
-			System.out.println("Attempted invalid schema operation.");
-			System.exit(0);
-		}
-
-		if (xmlValidator.canAddElement(root, "element"))
-		{
-			child	= document.createElement("element");
-			root.appendChild(child);
-		}
-		else
-		{
-			System.out.println("Attempted invalid schema operation.");
 			System.exit(0);
 		}
 

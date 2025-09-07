@@ -12,7 +12,7 @@ public class PrettySerializationStrategy implements NodeSerializationStrategy {
 
     @Override
     public void serialize(edu.jhu.apl.patterns_class.dom.replacement.Node node, java.io.BufferedWriter	writer) throws java.io.IOException {
-        if (node instanceof edu.jhu.apl.patterns_class.dom.Document)
+        if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Document)
         {
             writer.write("<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
             writer.write("\n");
