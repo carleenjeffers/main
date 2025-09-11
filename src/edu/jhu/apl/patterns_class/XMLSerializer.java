@@ -92,7 +92,7 @@ public class XMLSerializer
 			XMLSerializer	xmlSerializer	= new XMLSerializer(args[0], new PrettyWhitespaceStrategy(), new FileOutputStreamStrategy());
 			xmlSerializer.serialize(document);
 			xmlSerializer.close();
-			xmlSerializer	= new XMLSerializer(args[1], new PrettyWhitespaceStrategy(), new FileOutputStreamStrategy());
+			xmlSerializer	= new XMLSerializer(args[1], new MinimalWhitespaceStrategy(), new FileOutputStreamStrategy());
 			xmlSerializer.serialize(document);
 			xmlSerializer.close();
 		}

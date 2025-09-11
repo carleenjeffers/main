@@ -113,7 +113,7 @@ public class XMLValidator
 			xmlSerializer.close();
 
 			// demonstrate console output stream strategy
-			xmlSerializer = new XMLSerializer(args[0], new MinimalWhitespaceStrategy(), new ConsoleOutputStreamStrategy());
+			xmlSerializer = new XMLSerializer(args[0], new PrettyWhitespaceStrategy(), new ConsoleOutputStreamStrategy());
 			xmlSerializer.serialize(document);
 			xmlSerializer.close();
 		}

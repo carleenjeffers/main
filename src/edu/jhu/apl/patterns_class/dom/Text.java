@@ -107,7 +107,9 @@ public class Text extends Node implements edu.jhu.apl.patterns_class.dom.replace
 
 	@Override
 	public void serialize(java.io.BufferedWriter	writer, edu.jhu.apl.patterns_class.strategy.WhitespaceStrategy strategy) throws java.io.IOException {
+		strategy.handleIndent(writer);
 		writer.write(this.getData());
+		strategy.handleNewline(writer);
 	}
 
 	public edu.jhu.apl.patterns_class.dom.replacement.Text replaceWholeText(String content) { return null; }

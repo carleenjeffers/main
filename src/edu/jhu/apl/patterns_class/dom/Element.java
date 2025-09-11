@@ -155,6 +155,7 @@ public class Element extends Node implements edu.jhu.apl.patterns_class.dom.repl
 
 	@Override
 	public void serialize(java.io.BufferedWriter	writer, edu.jhu.apl.patterns_class.strategy.WhitespaceStrategy strategy) throws java.io.IOException {
+		strategy.handleIndent(writer);
 		writer.write("<" + this.getTagName());
 
 		for (java.util.ListIterator i =
@@ -166,11 +167,16 @@ public class Element extends Node implements edu.jhu.apl.patterns_class.dom.repl
 			attr.serialize(writer, strategy);
 		}
 
-		if (!((NodeList )this.getChildNodes()).listIterator(0).hasNext())
+		strategy.handleAttributes(writer);
+
+		if (!((NodeList )this.getChildNodes()).listIterator(0).hasNext()) {
 			writer.write("/>");
-		else
+			strategy.handleNewline(writer);
+		} else
 		{
 			writer.write(">");
+			strategy.handleNewline(writer);
+			strategy.incrementIndentationLevel();
 
 			for (java.util.ListIterator i =
 				((NodeList )this.getChildNodes()).listIterator(0);
@@ -180,8 +186,11 @@ public class Element extends Node implements edu.jhu.apl.patterns_class.dom.repl
 					(edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
 				child.serialize(writer, strategy);
 			}
+			strategy.decrementIndentationLevel();
+			strategy.handleIndent(writer);
 
 			writer.write("</" + this.getTagName() + ">");
+			strategy.handleNewline(writer);
 		}
 	}
 

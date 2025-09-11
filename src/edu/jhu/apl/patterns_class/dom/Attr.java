@@ -39,6 +39,7 @@ public class Attr extends Node implements edu.jhu.apl.patterns_class.dom.replace
 
 	@Override
 	public void serialize(java.io.BufferedWriter	writer, edu.jhu.apl.patterns_class.strategy.WhitespaceStrategy strategy) throws java.io.IOException {
+		strategy.incrementAttributeCount();
 		writer.write(" " + this.getName() + "=\"" + this.getValue() + "\"");
 	}
 
