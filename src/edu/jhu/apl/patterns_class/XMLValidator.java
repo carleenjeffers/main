@@ -69,7 +69,7 @@ public class XMLValidator
 			document.appendChild(root);
 			System.out.print("Failed to catch invalid operation!");
 		} catch (InvalidSchemaOperationException e) {
-			System.out.println("Successfully caught invalid operation.");
+			System.out.println("Successfully caught invalid operation with message: " + e.getMessage());
 		}
 		
 		try {
@@ -108,12 +108,12 @@ public class XMLValidator
 		//
 		try
 		{
-			XMLSerializer	xmlSerializer	= new XMLSerializer(args[0], new PrettySerializationStrategy(), new FileOutputStreamStrategy());
+			XMLSerializer	xmlSerializer	= new XMLSerializer(args[0], new PrettyWhitespaceStrategy(), new FileOutputStreamStrategy());
 			xmlSerializer.serialize(document);
 			xmlSerializer.close();
 
 			// demonstrate console output stream strategy
-			xmlSerializer = new XMLSerializer(args[0], new PrettySerializationStrategy(), new ConsoleOutputStreamStrategy());
+			xmlSerializer = new XMLSerializer(args[0], new MinimalWhitespaceStrategy(), new ConsoleOutputStreamStrategy());
 			xmlSerializer.serialize(document);
 			xmlSerializer.close();
 		}

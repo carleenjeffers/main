@@ -173,6 +173,8 @@ public class Node implements edu.jhu.apl.patterns_class.dom.replacement.Node
 	public short compareDocumentPosition(edu.jhu.apl.patterns_class.dom.replacement.Node other)	{ return (short )0; }
 	public String getBaseURI()									{ return null; }
 
+	public void serialize(java.io.BufferedWriter	writer, edu.jhu.apl.patterns_class.strategy.WhitespaceStrategy strategy) throws java.io.IOException {} ;
+
 	//
 	// Class Members
 	//

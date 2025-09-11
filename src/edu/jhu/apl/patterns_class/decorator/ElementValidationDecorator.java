@@ -22,7 +22,7 @@ public class ElementValidationDecorator extends NodeValidationDecorator implemen
     @Override
     public Attr setAttributeNode(Attr newAttr) {
         if (!canAddAttribute(newAttr.getName())) {
-            throw new InvalidSchemaOperationException();
+            throw new InvalidSchemaOperationException("Cannot add input attribute");
         }
 
         return decoratedElement.setAttributeNode(newAttr);
@@ -31,7 +31,7 @@ public class ElementValidationDecorator extends NodeValidationDecorator implemen
     @Override
     public void setAttribute(String name, String value) {
         if (!canAddAttribute(name)) {
-            throw new InvalidSchemaOperationException();
+            throw new InvalidSchemaOperationException("Cannot set input attribute");
         }
 
         decoratedElement.setAttribute(name, value);
@@ -44,12 +44,12 @@ public class ElementValidationDecorator extends NodeValidationDecorator implemen
         switch (type) {
             case org.w3c.dom.Node.ELEMENT_NODE:
                 if (!canAddElement(decoratedElement, newChild.getNodeName())) {
-                    throw new InvalidSchemaOperationException();
+                    throw new InvalidSchemaOperationException("Cannot add input element");
                 }
                 break;
             case org.w3c.dom.Node.TEXT_NODE:
                 if (!canAddText()) {
-                    throw new InvalidSchemaOperationException();
+                    throw new InvalidSchemaOperationException("Cannot add input text");
                 }
                 break;
             default:

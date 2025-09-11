@@ -105,6 +105,8 @@ public abstract class NodeValidationDecorator implements edu.jhu.apl.patterns_cl
     public short compareDocumentPosition(Node other) { return decoratedNode.compareDocumentPosition(other); };
 	@Override
     public String getBaseURI() { return decoratedNode.getBaseURI(); };
+    @Override
+    public void serialize(java.io.BufferedWriter	writer, edu.jhu.apl.patterns_class.strategy.WhitespaceStrategy strategy) throws java.io.IOException { decoratedNode.serialize(writer, strategy); };
 
     // protected helper functions
     protected boolean canAddElement(edu.jhu.apl.patterns_class.dom.replacement.Element element, String newElement)

@@ -24,7 +24,7 @@ public class DocumentValidationDecorator extends NodeValidationDecorator impleme
     public Node appendChild(edu.jhu.apl.patterns_class.dom.replacement.Node newChild) throws org.w3c.dom.DOMException {
         // validation checks
         if (!canRootElement(newChild.getNodeName())) {
-            throw new InvalidSchemaOperationException();
+            throw new InvalidSchemaOperationException("Input node cannot be root element");
         }
         return decoratedNode.appendChild(newChild);
     }

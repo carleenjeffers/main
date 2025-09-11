@@ -37,6 +37,11 @@ public class Attr extends Node implements edu.jhu.apl.patterns_class.dom.replace
 		return (Element )getParentNode();
 	}
 
+	@Override
+	public void serialize(java.io.BufferedWriter	writer, edu.jhu.apl.patterns_class.strategy.WhitespaceStrategy strategy) throws java.io.IOException {
+		writer.write(" " + this.getName() + "=\"" + this.getValue() + "\"");
+	}
+
 	//
 	// Unimplemented Attr members.
 	//

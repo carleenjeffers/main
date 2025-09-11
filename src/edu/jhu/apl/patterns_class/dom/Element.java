@@ -153,6 +153,38 @@ public class Element extends Node implements edu.jhu.apl.patterns_class.dom.repl
 		return oldAttribute;
 	}
 
+	@Override
+	public void serialize(java.io.BufferedWriter	writer, edu.jhu.apl.patterns_class.strategy.WhitespaceStrategy strategy) throws java.io.IOException {
+		writer.write("<" + this.getTagName());
+
+		for (java.util.ListIterator i =
+			((NodeList )this.getAttributes()).listIterator(0);
+			i.hasNext();)
+		{
+			edu.jhu.apl.patterns_class.dom.replacement.Node	attr =
+				(edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
+			attr.serialize(writer, strategy);
+		}
+
+		if (!((NodeList )this.getChildNodes()).listIterator(0).hasNext())
+			writer.write("/>");
+		else
+		{
+			writer.write(">");
+
+			for (java.util.ListIterator i =
+				((NodeList )this.getChildNodes()).listIterator(0);
+				i.hasNext();)
+			{
+				edu.jhu.apl.patterns_class.dom.replacement.Node	child =
+					(edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
+				child.serialize(writer, strategy);
+			}
+
+			writer.write("</" + this.getTagName() + ">");
+		}
+	}
+
 	//
 	// Unimplemented Element members.
 	//

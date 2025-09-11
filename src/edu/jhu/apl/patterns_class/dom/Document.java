@@ -34,6 +34,12 @@ public class Document extends Node implements edu.jhu.apl.patterns_class.dom.rep
 		return null;
 	}
 
+	@Override
+	public void serialize(java.io.BufferedWriter	writer, edu.jhu.apl.patterns_class.strategy.WhitespaceStrategy strategy) throws java.io.IOException {
+		writer.write("<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		this.getDocumentElement().serialize(writer, strategy);
+	}
+
 	//
 	// Unimplemented Document members.
 	//

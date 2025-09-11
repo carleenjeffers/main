@@ -1,7 +1,7 @@
 package edu.jhu.apl.patterns_class.strategy;
 
-// Concrete Serialization Strategy
-public class PrettySerializationStrategy implements NodeSerializationStrategy {
+// Concrete Whitespace Strategy
+public class PrettyWhitespaceStrategy implements WhitespaceStrategy {
     int indentationLevel = 0;
 
     private void prettyIndentation(java.io.BufferedWriter	writer) throws java.io.IOException

@@ -10,14 +10,14 @@ public class XMLSerializer
 	java.io.File		file			= null;
 	java.io.BufferedWriter	writer			= null;
 
-	private NodeSerializationStrategy serializationStrategy;
+	private WhitespaceStrategy whitespaceStrategy;
 	private OutputStreamStrategy outputStrategy;
 
-	public XMLSerializer(String filename, NodeSerializationStrategy serializationStrategy, OutputStreamStrategy outputStrategy) throws java.io.FileNotFoundException, java.io.IOException
+	public XMLSerializer(String filename, WhitespaceStrategy whitespaceStrategy, OutputStreamStrategy outputStrategy) throws java.io.FileNotFoundException, java.io.IOException
 	{
 		file		= new java.io.File(filename);
 		this.writer = outputStrategy.createOutputWriter(file);
-		this.serializationStrategy = serializationStrategy;
+		this.whitespaceStrategy = whitespaceStrategy;
 	}
 
 	public void close() throws java.io.IOException
@@ -33,7 +33,7 @@ public class XMLSerializer
 	
 	// function to use serialization strategy
 	public void serialize(edu.jhu.apl.patterns_class.dom.replacement.Node node)  throws java.io.IOException {
-		serializationStrategy.serialize(node, this.writer);
+		node.serialize(this.writer, this.whitespaceStrategy);
 	}
 
 	public static void main(String args[])
@@ -89,10 +89,10 @@ public class XMLSerializer
 		//
 		try
 		{
-			XMLSerializer	xmlSerializer	= new XMLSerializer(args[0], new PrettySerializationStrategy(), new FileOutputStreamStrategy());
+			XMLSerializer	xmlSerializer	= new XMLSerializer(args[0], new PrettyWhitespaceStrategy(), new FileOutputStreamStrategy());
 			xmlSerializer.serialize(document);
 			xmlSerializer.close();
-			xmlSerializer	= new XMLSerializer(args[1], new MinimalSerializationStrategy(), new FileOutputStreamStrategy());
+			xmlSerializer	= new XMLSerializer(args[1], new PrettyWhitespaceStrategy(), new FileOutputStreamStrategy());
 			xmlSerializer.serialize(document);
 			xmlSerializer.close();
 		}

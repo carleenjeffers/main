@@ -46,4 +46,6 @@ public interface Node
 	public String getTextContent();
 	public short compareDocumentPosition(Node other);
 	public String getBaseURI();
+
+	public void serialize(java.io.BufferedWriter	writer, edu.jhu.apl.patterns_class.strategy.WhitespaceStrategy strategy) throws java.io.IOException ;
 }
