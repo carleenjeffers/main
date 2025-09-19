@@ -1,5 +1,8 @@
 package edu.jhu.apl.patterns_class;
 
+import edu.jhu.apl.patterns_class.iterator.*;
+import edu.jhu.apl.patterns_class.dom.replacement.*;;
+
 public class XMLSerializer
 {
 	java.io.File		file			= null;
@@ -28,128 +31,150 @@ public class XMLSerializer
 	// Strategize whitespace insertion.
 	// Strategize output stream
 	//
-	public void serializePretty(edu.jhu.apl.patterns_class.dom.replacement.Node node) throws java.io.IOException
-	{
-		if (node instanceof edu.jhu.apl.patterns_class.dom.Document)
-		{
-			writer.write("<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.write("\n");
-			serializePretty(((edu.jhu.apl.patterns_class.dom.replacement.Document )node).getDocumentElement());
+	// todo- read through and refactor
+	public void serializePretty(Node rootNode) throws java.io.IOException {
+		if (rootNode instanceof edu.jhu.apl.patterns_class.dom.Document) {
+			writer.write("<? xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			rootNode = ((Document) rootNode).getDocumentElement();
 		}
-		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Element)
-		{
-			prettyIndentation();
-			writer.write("<" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName());
 
-			int	attrCount	= 0;
+		// Use your NodeIterator
+		NodeIterator iterator = new NodeIterator(rootNode);
 
-			for (java.util.ListIterator i =
-			  ((edu.jhu.apl.patterns_class.dom.NodeList )node.getAttributes()).listIterator(0);
-			  i.hasNext();)
-			{
-				edu.jhu.apl.patterns_class.dom.replacement.Node	attr =
-				  (edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
+		// Stack to track open elements for indentation and closing
+		java.util.Stack<Element> elementStack = new java.util.Stack<>();
 
-				serializePretty(attr);
-				attrCount++;
-			}
+		while (iterator.hasNext()) {
+			Node currentNode = iterator.next();
 
-			if (attrCount > 0)
-				writer.write(" ");
-
-			if (!((edu.jhu.apl.patterns_class.dom.NodeList )node.getChildNodes()).listIterator(0).hasNext())
-			{
-				writer.write("/>");
-				writer.write("\n");
-			}
-			else
-			{
-				writer.write(">");
-				writer.write("\n");
-				indentationLevel++;
-
-				for (java.util.ListIterator i =
-				  ((edu.jhu.apl.patterns_class.dom.NodeList )node.getChildNodes()).listIterator(0);
-				  i.hasNext();)
-				{
-					edu.jhu.apl.patterns_class.dom.replacement.Node	child =
-					  (edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
-
-					if (child instanceof edu.jhu.apl.patterns_class.dom.replacement.Element ||
-					  child instanceof edu.jhu.apl.patterns_class.dom.replacement.Text)
-						serializePretty(child);
-				}
-
+			// Pop the stack if we've moved up the tree
+			while (!elementStack.isEmpty() && !isParentOf(elementStack.peek(), currentNode)) {
 				indentationLevel--;
 				prettyIndentation();
-				writer.write("</" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName() + ">");
+				writer.write("</" + elementStack.pop().getTagName() + ">\n");
+			}
+
+			if (currentNode instanceof Element) {
+				Element elem =
+						(Element) currentNode;
+
+				prettyIndentation();
+				writer.write("<" + elem.getTagName());
+
+				// Write attributes
+				NamedNodeMapIterator attrIterator = new NamedNodeMapIterator(elem.getAttributes());
+				while (attrIterator.hasNext()) {
+					Attr attr =
+							(Attr) attrIterator.next();
+					writer.write(" " + attr.getName() + "=\"" + attr.getValue() + "\"");
+				}
+
+				// Check if this element has child Elements or Text nodes
+				boolean hasChildElementsOrText = false;
+				NodeList children = elem.getChildNodes();
+				for (int i = 0; i < children.getLength(); i++) {
+					Node child = children.item(i);
+					if (child instanceof Element ||
+						child instanceof Text) {
+						hasChildElementsOrText = true;
+						break;
+					}
+				}
+
+				if (hasChildElementsOrText) {
+					writer.write(">\n");
+					elementStack.push(elem);
+					indentationLevel++;
+				} else {
+					writer.write("/>\n");
+				}
+			} else if (currentNode instanceof Text) {
+				prettyIndentation();
+				writer.write(((Text) currentNode).getData());
 				writer.write("\n");
 			}
 		}
-		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Attr)
-		{
-			writer.write(" " + ((edu.jhu.apl.patterns_class.dom.replacement.Attr )node).getName() + "=\"" +
-			  ((edu.jhu.apl.patterns_class.dom.replacement.Attr )node).getValue() + "\"");
-		}
-		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Text)
-		{
+
+		// Close any remaining open tags
+		while (!elementStack.isEmpty()) {
+			indentationLevel--;
 			prettyIndentation();
-			writer.write(((edu.jhu.apl.patterns_class.dom.replacement.Text )node).getData());
-			writer.write("\n");
+			writer.write("</" + elementStack.pop().getTagName() + ">\n");
 		}
 	}
 
-	public void serializeMinimal(edu.jhu.apl.patterns_class.dom.replacement.Node node) throws java.io.IOException
-	{
-		if (node instanceof edu.jhu.apl.patterns_class.dom.Document)
-		{
-			writer.write("<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			serializeMinimal(((edu.jhu.apl.patterns_class.dom.replacement.Document )node).getDocumentElement());
+
+	private boolean isParentOf(Element parent,
+                           Node child) {
+		Node current = child.getParentNode();
+		while (current != null) {
+			if (current == parent)
+				return true;
+			current = current.getParentNode();
 		}
-		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Element)
-		{
-			writer.write("<" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName());
+		return false;
+	}
 
-			for (java.util.ListIterator i =
-			  ((edu.jhu.apl.patterns_class.dom.NodeList )node.getAttributes()).listIterator(0);
-			  i.hasNext();)
-			{
-				edu.jhu.apl.patterns_class.dom.replacement.Node	attr =
-				  (edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
+	public void serializeMinimal(Node rootNode) throws java.io.IOException {
+		if (rootNode instanceof edu.jhu.apl.patterns_class.dom.Document) {
+			writer.write("<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			rootNode = ((Document) rootNode).getDocumentElement();
+		}
 
-				serializeMinimal(attr);
+		NodeIterator iterator =
+			new NodeIterator(rootNode);
+
+		java.util.Stack<Element> elementStack = new java.util.Stack<>();
+
+		while (iterator.hasNext()) {
+			Node currentNode = iterator.next();
+
+			// Close tags if we're moving up in the tree
+			while (!elementStack.isEmpty() && !isParentOf(elementStack.peek(), currentNode)) {
+				writer.write("</" + elementStack.pop().getTagName() + ">");
 			}
 
-			if (!((edu.jhu.apl.patterns_class.dom.NodeList )node.getChildNodes()).listIterator(0).hasNext())
-				writer.write("/>");
-			else
-			{
-				writer.write(">");
+			if (currentNode instanceof Element) {
+				Element elem =
+					(Element) currentNode;
 
-				for (java.util.ListIterator i =
-				  ((edu.jhu.apl.patterns_class.dom.NodeList )node.getChildNodes()).listIterator(0);
-				  i.hasNext();)
-				{
-					edu.jhu.apl.patterns_class.dom.replacement.Node	child =
-					  (edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
-
-					if (child instanceof edu.jhu.apl.patterns_class.dom.replacement.Element ||
-					  child instanceof edu.jhu.apl.patterns_class.dom.replacement.Text)
-						serializeMinimal(child);
+				writer.write("<" + elem.getTagName());
+				NodeList attrs = elem.getAttributes();
+				for (int i = 0; i < attrs.getLength(); i++) {
+					Attr attr =
+						(Attr) attrs.item(i);
+					writer.write(" " + attr.getName() + "=\"" + attr.getValue() + "\"");
 				}
 
-				writer.write("</" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName() + ">");
+				NodeList children = elem.getChildNodes();
+				boolean hasChildren = false;
+
+				for (int i = 0; i < children.getLength(); i++) {
+					Node child = children.item(i);
+					if (child instanceof Element ||
+						child instanceof Text) {
+						hasChildren = true;
+						break;
+					}
+				}
+
+				if (!hasChildren) {
+					writer.write("/>");
+				} else {
+					writer.write(">");
+					elementStack.push(elem);  // We'll close it later
+				}
+
+			} else if (currentNode instanceof Text) {
+				writer.write(((Text) currentNode).getData());
 			}
 		}
-		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Attr)
-		{
-			writer.write(" " + ((edu.jhu.apl.patterns_class.dom.replacement.Attr )node).getName() + "=\"" +
-			  ((edu.jhu.apl.patterns_class.dom.replacement.Attr )node).getValue() + "\"");
+
+		// Close any remaining open tags
+		while (!elementStack.isEmpty()) {
+			writer.write("</" + elementStack.pop().getTagName() + ">");
 		}
-		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Text)
-		{
-			writer.write(((edu.jhu.apl.patterns_class.dom.replacement.Text )node).getData());
-		}
+
 	}
 
 	public static void main(String args[])
@@ -173,13 +198,13 @@ public class XMLSerializer
 		//   </element>
 		// </document>
 		//
-		edu.jhu.apl.patterns_class.dom.replacement.Document	document	=
+		Document	document	=
 		  new edu.jhu.apl.patterns_class.dom.Document();
-		edu.jhu.apl.patterns_class.dom.replacement.Element	root		= document.createElement("document");
+		Element	root		= document.createElement("document");
 		document.appendChild(root);
 
-		edu.jhu.apl.patterns_class.dom.replacement.Element	child		= document.createElement("element");
-		edu.jhu.apl.patterns_class.dom.replacement.Attr		attr		= document.createAttribute("attribute");
+		Element	child		= document.createElement("element");
+		Attr		attr		= document.createAttribute("attribute");
 		attr.setValue("attribute value");
 		child.setAttributeNode(attr);
 		root.appendChild(child);
@@ -190,7 +215,7 @@ public class XMLSerializer
 		child	= document.createElement("element");
 		child.setAttribute("attribute", "attribute value");
 		child.setAttribute("attribute2", "attribute2 value");
-		edu.jhu.apl.patterns_class.dom.replacement.Text		text		= document.createTextNode("Element Value");
+		Text		text		= document.createTextNode("Element Valu");
 		child.appendChild(text);
 		root.appendChild(child);
 
