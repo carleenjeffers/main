@@ -1,6 +1,6 @@
 package edu.jhu.apl.patterns_class.dom.replacement;
 
-public interface Element extends Node
+public interface Element extends ParentNode
 {
 	//
 	// Implemented Element members.

@@ -1,7 +1,14 @@
 package edu.jhu.apl.patterns_class.dom.replacement;
 
+import edu.jhu.apl.patterns_class.XMLSerializer;
+
+// Component
 public interface Node
 {
+
+	public void serializePretty(XMLSerializer.XMLSerializerContext	ctx) throws java.io.IOException;
+	public void serializeMinimal(XMLSerializer.XMLSerializerContext	ctx) throws java.io.IOException;
+
 	//
 	// Implemented Interface Members
 	//
@@ -9,17 +16,10 @@ public interface Node
 	public String	getNodeValue() throws org.w3c.dom.DOMException;
 	public void	setNodeValue(String nodeValue) throws org.w3c.dom.DOMException;
 	public short	getNodeType();
-	public Node	getParentNode();
-	public NodeList	getChildNodes();
-	public Node	getFirstChild();
-	public Node	getLastChild();
+	public ParentNode	getParentNode();
 	public Node	getPreviousSibling();
 	public Node	getNextSibling();
 	public Document	getOwnerDocument();
-	public Node	insertBefore(Node newChild, Node refChild) throws org.w3c.dom.DOMException;
-	public Node	replaceChild(Node newChild, Node oldChild) throws org.w3c.dom.DOMException;
-	public Node	removeChild(Node oldChild) throws org.w3c.dom.DOMException;
-	public Node	appendChild(Node newChild) throws org.w3c.dom.DOMException;
 	public boolean	hasChildNodes();
 	public String	getLocalName();
 

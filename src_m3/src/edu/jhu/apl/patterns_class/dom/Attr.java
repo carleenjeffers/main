@@ -1,5 +1,8 @@
 package edu.jhu.apl.patterns_class.dom;
 
+import edu.jhu.apl.patterns_class.XMLSerializer;
+
+// Leaf
 public class Attr extends Node implements edu.jhu.apl.patterns_class.dom.replacement.Attr
 {
 	Attr(String tagName, Document document)
@@ -13,6 +16,13 @@ public class Attr extends Node implements edu.jhu.apl.patterns_class.dom.replace
 		super(tagName, org.w3c.dom.Node.ATTRIBUTE_NODE);
 		this.document	= document;
 		setValue(value);
+	}
+
+	public void serializePretty(XMLSerializer.XMLSerializerContext	ctx) throws java.io.IOException {
+		ctx.writer.write(" " + this.getName() + "=\"" + this.getValue() + "\"");
+	}
+	public void serializeMinimal(XMLSerializer.XMLSerializerContext	ctx) throws java.io.IOException {
+		ctx.writer.write(" " + this.getName() + "=\"" + this.getValue() + "\"");
 	}
 
 	//

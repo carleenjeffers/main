@@ -2,7 +2,7 @@ package edu.jhu.apl.patterns_class.iterator;
 
 import edu.jhu.apl.patterns_class.dom.replacement.*;
 
-// Concrete Aggregate
+// ConcreteAggregate
 public class NodeAggregate implements Aggregate<Node> {
     private Node root;
 

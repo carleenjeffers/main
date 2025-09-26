@@ -1,0 +1,217 @@
+@startuml classDiagramMod3
+top to bottom direction
+
+'ITERATOR
+interface Iterator<T> {
+    +hasNext(): boolean
+    +next(): T
+}
+
+interface Aggregate<T> {
+    +createIterator(): Iterator<T>
+}
+
+class NamedNodeMapAggregate {
+    -root: NamedNodeMap
+    +NamedNodeMapAggregate(NamedNodeMap root)
+    +createIterator(): NamedNodeMapIterator
+}
+
+class NamedNodeMapIterator {
+    -nodeMap: NamedNodeMap
+    -index: int
+    +NamedNodeMapIterator(NamedNodeMap nodeMap)
+    +hasNext(): boolean
+    +next(): Node
+}
+
+class NodeAggregate {
+    -root: Node
+    +NodeAggregate(Node root)
+    +createIterator(): NodeIterator
+}
+
+class NodeIterator {
+    -nodes: Stack<Node>
+    +NodeIterator(Node root)
+    +hasNext(): boolean
+    +next(): Node
+}
+
+class NodeListAggregate {
+    -root: NodeList
+    +NodeListAggregate(NodeList root)
+    +createIterator(): NodeListIterator
+}
+
+class NodeListIterator {
+    -nodeList: NodeList
+    -index: int
+    +NodeListIterator(NodeList nodeList)
+    +hasNext(): boolean
+    +next(): Node
+}
+
+class XMLSerializer{
+    -file: java.io.File
+    +XMLSerializer(String filename)
+    +close(): void
+    +serializePretty(edu.jhu.apl.patterns_class.dom.replacement.Node node): void
+    +serializeMinimal(edu.jhu.apl.patterns_class.dom.replacement.Node node): void
+}
+
+class XMLSerializerContext {
+    +writer: java.io.BufferedWriter
+    -indentationLevel: int
+    +XMLSerializerContext(java.io.BufferedWriter writer)
+    +prettyIndentation(): void
+    +incrementIndentationLevel(): void
+    +decrementIndentationLevel(): void
+}
+
+interface Node{
+    +serializePretty(XMLSerializer.XMLSerializerContext	ctx): void
+    +serializeMinimal(XMLSerializer.XMLSerializerContext	ctx): void
+    +getNodeName(): String
+    +getNodeValue(): String
+    +setNodeValue(String nodeValue): void
+    +getNodeType(): short
+    +getParentNode(): ParentNode
+    +getPreviousSibling(): Node
+    +getNextSibling(): Node
+    +getOwnerDocument(): Document
+    +hasChildNodes(): boolean
+    +getLocalName(): String
+    +normalize(): void
+    +isSupported(String feature, String version): boolean
+    +getNamespaceURI(): String
+    +getPrefix(): String
+    +setPrefix(String prefix): void
+    +cloneNode(boolean deep): Node
+    +hasAttributes(): boolean
+    +getAttributes(): NamedNodeMap
+    +getUserData(String key): Object
+    +setUserData(String key, Object data, org.w3c.dom.UserDataHandler handler): Object
+    +isEqualNode(Node arg): boolean
+    +lookupNamespaceURI(String prefix): String
+    +isDefaultNamespace(String namespaceURI): boolean
+    +lookupPrefix(String namespaceURI): String
+    +isSameNode(Node other): boolean
+    +setTextContent(String textContent): void
+    +getTextContent(): String
+    +compareDocumentPosition(Node other): short
+    +getBaseURI(): String
+}
+
+interface ParentNode {
+    +appendChild(Node newChild): Node
+    +removeChild(Node oldChild): Node
+    +getChildNodes(): NodeList
+    +getFirstChild(): Node
+    +getLastChild(): Node
+    +insertBefore(Node newChild, Node refChild): Node
+    +replaceChild(Node newChild, Node oldChild): Node
+}
+
+interface "Element" as IElement {}
+note right of IElement
+Leaving this interface blank because no changes were made to its structure.
+Refer to original UML for this class diagram.
+end note
+interface "Document" as IDocument {}
+note right of IDocument
+Leaving this interface blank because no changes were made to its structure.
+Refer to original UML for this class diagram.
+end note
+interface "Attr" as IAttr {}
+note right of IAttr
+Leaving this interface blank because no changes were made to its structure.
+Refer to original UML for this class diagram.
+end note
+interface "Text" as IText {}
+note right of IText
+Leaving this interface blank because no changes were made to its structure.
+Refer to original UML for this class diagram.
+end note
+
+class "Element" as CElement {
+    -nodes: NodeList
+    +appendChild(Node newChild): Node
+    +removeChild(Node oldChild): Node
+    +getChildNodes(): NodeList
+    +getFirstChild(): Node
+    +getLastChild(): Node
+    +insertBefore(Node newChild, Node refChild): Node
+    +replaceChild(Node newChild, Node oldChild): Node
+    +serializePretty(XMLSerializer.XMLSerializerContext	ctx): void
+    +serializeMinimal(XMLSerializer.XMLSerializerContext	ctx): void
+}
+note right of CElement
+Only including added functions for this class.
+end note
+
+class "Document" as CDocument {
+    -nodes: NodeList
+    +appendChild(Node newChild): Node
+    +removeChild(Node oldChild): Node
+    +getChildNodes(): NodeList
+    +getFirstChild(): Node
+    +getLastChild(): Node
+    +insertBefore(Node newChild, Node refChild): Node
+    +replaceChild(Node newChild, Node oldChild): Node
+    +serializePretty(XMLSerializer.XMLSerializerContext	ctx): void
+    +serializeMinimal(XMLSerializer.XMLSerializerContext	ctx): void
+}
+note right of CDocument
+Only including added functions for this class.
+end note
+
+class "Attr" as CAttr {
+    +serializePretty(XMLSerializer.XMLSerializerContext	ctx): void
+    +serializeMinimal(XMLSerializer.XMLSerializerContext	ctx): void
+}
+note right of CAttr
+Only including added functions for this class.
+end note
+
+class "Text" as CText {
+    +serializePretty(XMLSerializer.XMLSerializerContext	ctx): void
+    +serializeMinimal(XMLSerializer.XMLSerializerContext	ctx): void
+}
+note right of CText
+Only including added functions for this class.
+end note
+
+ParentNode --|> Node
+IElement --|> ParentNode
+IDocument --|> ParentNode
+IText --|> Node
+IAttr --|> Node
+CElement --|> IElement
+CDocument --|> IDocument
+CText --|> IText
+CAttr --|> IAttr
+
+NamedNodeMapAggregate ..|> Aggregate
+NodeAggregate ..|> Aggregate
+NodeListAggregate ..|> Aggregate
+NamedNodeMapIterator ..|> Iterator
+NodeIterator ..|> Iterator
+NodeListIterator ..|> Iterator
+
+NamedNodeMapAggregate --> NamedNodeMapIterator : <<instantiates>>
+NodeAggregate --> NodeIterator : <<instantiates>>
+NodeListAggregate --> NodeListIterator : <<instantiates>>
+
+XMLSerializer --> NamedNodeMapAggregate
+XMLSerializer --> NodeAggregate
+XMLSerializer --> NodeListAggregate
+XMLSerializer --> NamedNodeMapIterator
+XMLSerializer --> NodeIterator
+XMLSerializer --> NodeListIterator
+XMLSerializer --> Node
+
+XMLSerializer --> XMLSerializerContext
+Node --> XMLSerializerContext
+
+@enduml
