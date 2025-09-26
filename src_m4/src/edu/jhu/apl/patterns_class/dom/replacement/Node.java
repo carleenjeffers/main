@@ -1,7 +1,25 @@
 package edu.jhu.apl.patterns_class.dom.replacement;
 
+import edu.jhu.apl.patterns_class.XMLSerializer;
+
 public interface Node
 {
+	// Template Method
+	public void serializeMinimal(java.io.BufferedWriter writer) throws java.io.IOException;
+	public void serializePretty(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException;
+
+	// PrimitiveMethods
+	public void writeOpenTags(java.io.BufferedWriter writer) throws java.io.IOException;
+	public void writeAttributes(java.io.BufferedWriter writer) throws java.io.IOException;
+	public void writeChildren(java.io.BufferedWriter writer) throws java.io.IOException;
+	public void writeClosingTags(java.io.BufferedWriter writer) throws java.io.IOException;
+
+	// Primitive Methods- serializePretty() only
+	public void formatStart(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException;
+	public void writeAttributesPretty(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException;
+	public void writeChildrenPretty(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException;
+	public void formatEnd(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException;
+
 	//
 	// Implemented Interface Members
 	//

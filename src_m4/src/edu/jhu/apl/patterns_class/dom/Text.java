@@ -1,5 +1,7 @@
 package edu.jhu.apl.patterns_class.dom;
 
+import edu.jhu.apl.patterns_class.XMLSerializer;
+
 public class Text extends Node implements edu.jhu.apl.patterns_class.dom.replacement.Text
 {
 	Text(String value, Document document)
@@ -7,6 +9,22 @@ public class Text extends Node implements edu.jhu.apl.patterns_class.dom.replace
 		super(null, org.w3c.dom.Node.TEXT_NODE);
 		setNodeValue(value);
 		this.document	= document;
+	}
+
+	// Override relevant PrimitiveMethods
+	@Override
+	public void writeOpenTags(java.io.BufferedWriter writer) throws java.io.IOException {
+		writer.write(this.getData());
+	}
+
+	@Override
+	public void formatStart(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {
+		ctx.prettyIndentation();
+	}
+
+	@Override
+	public void formatEnd(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {
+		ctx.writer.write("\n");
 	}
 
 	//

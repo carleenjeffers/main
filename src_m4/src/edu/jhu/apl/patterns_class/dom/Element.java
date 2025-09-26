@@ -1,5 +1,7 @@
 package edu.jhu.apl.patterns_class.dom;
 
+import edu.jhu.apl.patterns_class.XMLSerializer;
+
 public class Element extends Node implements edu.jhu.apl.patterns_class.dom.replacement.Element
 {
 	private NamedNodeMap		attributes	= null;
@@ -9,6 +11,107 @@ public class Element extends Node implements edu.jhu.apl.patterns_class.dom.repl
 		super(tagName, org.w3c.dom.Node.ELEMENT_NODE);
 		this.document	= document;
 		attributes	= new NamedNodeMap(document);
+	}
+
+	// Override relevant PrimitiveMethods
+	@Override
+	public void writeOpenTags(java.io.BufferedWriter writer) throws java.io.IOException {
+		writer.write("<" + this.getTagName());
+	}
+
+	@Override
+	public void writeAttributes(java.io.BufferedWriter writer) throws java.io.IOException {
+		for (java.util.ListIterator i =
+			  ((edu.jhu.apl.patterns_class.dom.NodeList )this.getAttributes()).listIterator(0);
+			  i.hasNext();)
+			{
+				edu.jhu.apl.patterns_class.dom.replacement.Node	attr =
+				  (edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
+
+				attr.serializeMinimal(writer);
+			}
+	}
+
+	@Override
+	public void writeChildren(java.io.BufferedWriter writer) throws java.io.IOException {
+		if (((edu.jhu.apl.patterns_class.dom.NodeList )this.getChildNodes()).listIterator(0).hasNext()) {
+			writer.write(">");
+
+			for (java.util.ListIterator i =
+				((edu.jhu.apl.patterns_class.dom.NodeList )this.getChildNodes()).listIterator(0);
+				i.hasNext();)
+			{
+				edu.jhu.apl.patterns_class.dom.replacement.Node	child =
+					(edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
+
+				if (child instanceof edu.jhu.apl.patterns_class.dom.replacement.Element ||
+					child instanceof edu.jhu.apl.patterns_class.dom.replacement.Text)
+					child.serializeMinimal(writer);
+			}
+		}
+	}
+
+	@Override
+	public void writeClosingTags(java.io.BufferedWriter writer) throws java.io.IOException {
+		if (!((edu.jhu.apl.patterns_class.dom.NodeList )this.getChildNodes()).listIterator(0).hasNext())
+			writer.write("/>");
+		else
+		{
+			writer.write("</" + this.getTagName() + ">");
+		}
+	}
+
+	@Override
+	public void formatStart(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {
+		ctx.prettyIndentation();
+	}
+
+	@Override
+	public void writeAttributesPretty(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {
+		int	attrCount	= 0;
+
+		for (java.util.ListIterator i =
+			((edu.jhu.apl.patterns_class.dom.NodeList )this.getAttributes()).listIterator(0);
+			i.hasNext();)
+		{
+			edu.jhu.apl.patterns_class.dom.replacement.Node	attr =
+				(edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
+
+			attr.serializePretty(ctx);
+			attrCount++;
+		}
+
+		if (attrCount > 0)
+			ctx.writer.write(" ");
+	}
+
+	@Override
+	public void writeChildrenPretty(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {
+		if (((edu.jhu.apl.patterns_class.dom.NodeList )this.getChildNodes()).listIterator(0).hasNext()) {
+			ctx.writer.write(">");
+			ctx.writer.write("\n");
+			ctx.incrementIndentationLevel();
+
+			for (java.util.ListIterator i =
+				((edu.jhu.apl.patterns_class.dom.NodeList )this.getChildNodes()).listIterator(0);
+				i.hasNext();)
+			{
+				edu.jhu.apl.patterns_class.dom.replacement.Node	child =
+					(edu.jhu.apl.patterns_class.dom.replacement.Node )i.next();
+
+				if (child instanceof edu.jhu.apl.patterns_class.dom.replacement.Element ||
+					child instanceof edu.jhu.apl.patterns_class.dom.replacement.Text)
+					child.serializePretty(ctx);
+			}
+
+			ctx.decrementIndentationLevel();
+			ctx.prettyIndentation();
+		}
+	}
+
+	@Override
+	public void formatEnd(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {
+		ctx.writer.write("\n");
 	}
 
 	//

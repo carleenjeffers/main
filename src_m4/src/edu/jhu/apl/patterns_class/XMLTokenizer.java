@@ -292,6 +292,7 @@ public class XMLTokenizer
 
 			System.out.println("File:  '" + args[i] + "'");
 
+			// Builder patter
 			do
 			{
 				try

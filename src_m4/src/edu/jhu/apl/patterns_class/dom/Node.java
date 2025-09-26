@@ -1,5 +1,7 @@
 package edu.jhu.apl.patterns_class.dom;
 
+import edu.jhu.apl.patterns_class.XMLSerializer;
+
 public class Node implements edu.jhu.apl.patterns_class.dom.replacement.Node
 {
 	private String		name		= null;
@@ -15,6 +17,34 @@ public class Node implements edu.jhu.apl.patterns_class.dom.replacement.Node
 		nodeType	= type;
 		nodes		= new NodeList();
 	}
+
+	// TemplateMethod
+	public void serializeMinimal(java.io.BufferedWriter writer) throws java.io.IOException {
+		writeOpenTags(writer);
+		writeAttributes(writer);
+		writeChildren(writer);
+		writeClosingTags(writer);
+	}
+
+	// TemplateMethod
+	public void serializePretty(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {
+		formatStart(ctx);
+		writeOpenTags(ctx.writer); // reuse from minimal
+		writeAttributesPretty(ctx);
+		writeChildrenPretty(ctx);
+		writeClosingTags(ctx.writer); // reuse from minimal
+		formatEnd(ctx);
+	}
+
+	// PrimitiveMethods - no-ops
+	public void writeOpenTags(java.io.BufferedWriter writer) throws java.io.IOException {};
+	public void writeAttributes(java.io.BufferedWriter writer) throws java.io.IOException {};
+	public void writeChildren(java.io.BufferedWriter writer) throws java.io.IOException {};
+	public void writeClosingTags(java.io.BufferedWriter writer) throws java.io.IOException {};
+	public void formatStart(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {};
+	public void writeAttributesPretty(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {};
+	public void writeChildrenPretty(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {};
+	public void formatEnd(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {};
 
 	void setParent(Node parent)							{ this.parent = parent; }
 

@@ -15,6 +15,12 @@ public class Attr extends Node implements edu.jhu.apl.patterns_class.dom.replace
 		setValue(value);
 	}
 
+	// Override relevant PrimitiveMethods
+	@Override
+	public void writeOpenTags(java.io.BufferedWriter writer) throws java.io.IOException {
+		writer.write(" " + this.getName() + "=\"" + this.getValue() + "\"");
+	}
+
 	//
 	// Implemented Attr members.
 	//

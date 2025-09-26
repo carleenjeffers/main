@@ -1,11 +1,30 @@
 package edu.jhu.apl.patterns_class.dom;
 
+import edu.jhu.apl.patterns_class.XMLSerializer;
+
 public class Document extends Node implements edu.jhu.apl.patterns_class.dom.replacement.Document
 {
 	public Document()
 	{
 		super(null, org.w3c.dom.Node.DOCUMENT_NODE);
 		document	= this;
+	}
+
+	// Override relevant PrimitiveMethods
+	@Override
+	public void writeOpenTags(java.io.BufferedWriter writer) throws java.io.IOException {
+		writer.write("<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
+	}
+
+	@Override
+	public void writeChildren(java.io.BufferedWriter writer) throws java.io.IOException {
+		this.getDocumentElement().serializeMinimal(writer);
+	}
+
+	@Override
+	public void writeChildrenPretty(XMLSerializer.XMLSerializerContext ctx) throws java.io.IOException {
+		ctx.writer.write("\n");
+		getDocumentElement().serializePretty(ctx);
 	}
 
 	//
