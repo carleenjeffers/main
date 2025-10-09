@@ -1,0 +1,16 @@
+@startuml classDiagram
+top to bottom direction
+
+class Parent {
+    -someProperty
+    +someMethod()
+}
+
+class Child {
+    +someMethod()
+    +someChildMethod()
+}
+
+Child --|> Parent
+
+@enduml
