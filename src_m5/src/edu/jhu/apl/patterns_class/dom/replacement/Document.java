@@ -1,5 +1,7 @@
 package edu.jhu.apl.patterns_class.dom.replacement;
 
+import edu.jhu.apl.patterns_class.XMLTokenizer;
+
 // Abstract Factory
 public interface Document extends Node
 {
@@ -8,6 +10,7 @@ public interface Document extends Node
 	//
 	// +CreateProductA, +CreateProductB, etc.
 	public Element createElement(String tagName) throws org.w3c.dom.DOMException;
+	public Element createElementProxy(String tagName, int tokenNum, XMLTokenizer tokenizer) throws org.w3c.dom.DOMException;
 	public Text createTextNode(String data);
 	public Attr createAttribute(String name) throws org.w3c.dom.DOMException;
 	public Element getDocumentElement();

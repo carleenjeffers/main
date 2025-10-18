@@ -1,5 +1,8 @@
 package edu.jhu.apl.patterns_class;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.jhu.apl.patterns_class.builder.*;
 import edu.jhu.apl.patterns_class.dom.Document;
 
@@ -38,6 +41,13 @@ public class XMLTokenizer
 	private java.util.regex.Matcher	value_matcher;
 	private java.util.regex.Matcher	tag_end_matcher;
 	private java.util.regex.Matcher	space_to_eol_matcher;
+
+	public DOMBuilder builder;
+
+	public List<XMLToken> tokens = new ArrayList<>();
+    private void addToTokens(XMLToken token) {
+        tokens.add(token);
+    }
 
 	public class XMLToken
 	{
@@ -117,6 +127,33 @@ public class XMLTokenizer
 	public XMLTokenizer(String filename) throws java.io.FileNotFoundException
 	{
 		reader	= new java.io.BufferedReader(new java.io.FileReader(filename));
+		setTokensList();
+		this.builder = new ConcreteDOMBuilder(new Document());
+	}
+
+	private void setTokensList() {
+		XMLToken token = null;
+		do {
+			try {
+				token = getNextToken();
+				addToTokens(token);
+			} catch (java.io.IOException e) {
+				System.out.println("IO Exception parsing file '" +  getFile() + "':  " + e);
+           		e.printStackTrace();
+			}
+			System.out.println("\tLine " + getLineNumber() + ":  " +
+            	token + " = '" + (token.getToken() == null ? "" : token.getToken()) + "'");
+		} while (token.getTokenType() != XMLToken.NULL);
+
+		System.out.println("Successfully built tokens list");
+	}
+
+	public XMLToken getTokenAtIndex(int idx) {
+		if (tokens.size() <= idx) {
+			System.out.println("Cannot get index" + idx + " for list of size " + tokens.size());
+			return null;
+		}
+		return tokens.get(idx);
 	}
 
 	public int getLineNumber()
@@ -131,6 +168,7 @@ public class XMLTokenizer
 
 	public XMLToken getNextToken() throws java.io.IOException
 	{
+
 		if (line == null)
 		{
 			line	= reader.readLine();
@@ -302,12 +340,11 @@ public class XMLTokenizer
 			System.out.println("File:  '" + args[i] + "'");
 
 			// Builder pattern
-			DOMBuilder builder = new ConcreteDOMBuilder(new Document());
-			DOMDirector director = new DOMDirector();
-			director.buildDOMTree(builder, tokenizer);
+			DOMDirectorSingleton director = DOMDirectorSingleton.getInstance();
+			director.buildDOMTree(tokenizer, false, 0, tokenizer.tokens.size(), null);
 
 			// now that DOM tree is built we test by writing the built DOM tree in builderTest.txt
-			edu.jhu.apl.patterns_class.dom.replacement.Node root = builder.getResult();
+			edu.jhu.apl.patterns_class.dom.replacement.Node root = tokenizer.builder.getResult();
 
 			try {
 				XMLSerializer serializer = new XMLSerializer("builderTest.txt");

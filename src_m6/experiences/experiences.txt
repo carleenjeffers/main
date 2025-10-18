@@ -1,0 +1,47 @@
+Path through experiences pattern:
+
+1. Interaction Style -> Explorable Interface
+2a. Explorable Interface -> Rewarding Sounds
+2b. Explorable Interface -> Single Setting
+3. Single Setting -> Goal-Oriented Areas
+4. Goal-Oriented Areas -> Menubar
+
+Description:
+
+As recommended in the paper, we start with the meta-pattern Interaction Style,
+which defines the way a user might interact with our system. We have four available
+interaction styles to choose from according to the pattern language. Of these options,
+I chose the Explorable Interface pattern. As described in the paper, it is important
+to consider the needs of our users when choosing the best Interaction Style. An
+Explorable Interface "presents task concepts visually", which I believe provides a
+more straightforward and seamless user experience for users of all levels of
+computer literacy. That being said, in future iterations of this application
+considerations regarding accessibility should be prioritized given that a visual-based
+Interaction Style cannot be used by all.
+
+Next, for our Explorable Interface we have a variety of patterns to choose from, with
+the core decision being if the majority of user interaction will require Single or
+Multiple Settings support. Because our XML application contains a single conceptual
+focus, I chose the Single Setting pattern. The paper notes that this choice is best for
+packages in which "the focus is usually on the manipulation of a certain contextual type
+of task or data", such as simple word processors and text editors, which is similar to the
+goal of the XML application. Therefore Single Setting presented as the best option 
+to not over-clutter our application and obscure the user from their goals. Also, to
+account for the visual based Explorable Interface, I chose to add the Rewarding Sounds
+pattern as a way of incorporating audio feedback into the user experience.
+
+Within the Single Setting, I chose the Goal-Oriented Areas pattern to organize the
+application's layout according to the user’s tasks. For example, the left area of the UI 
+will show the document tree for structure navigation, while the middle provides the editing
+workspace. Finally the bottom area displays validation messages or output. Using this pattern
+aids users in clearly seeing how the interface supports their goals and keeps related 
+tools grouped logically.
+
+Finally, to tie the interface together and provide the user with navigation abilities
+throught the application, I chose the Menubar pattern. It offers the user a consistent control 
+structure and gives access to global actions outlined in this week's assignment (New, Open, 
+View, Edit, Save). This pattern places critical commands in a predictable and consistent
+location, meaning the user can quickly find and execute major tasks with little to no
+friction. Also, in the spirit of trust-building between the user and the application, 
+the menubar also complements the Explorable Interface by offering safe, discoverable entry
+points to functionality.

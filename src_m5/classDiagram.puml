@@ -1,0 +1,76 @@
+@startuml classDiagramMod5
+top to bottom direction
+
+'Singleton Pattern
+class DOMDirectorSingleton {
+    -director: DOMDirectorSingleton
+    -DOMDirectorSingleton()
+    +getInstance(): DOMDirectorSingleton
+    +buildDOMTree(XMLTokenizer tokenizer, boolean parseChildren, int start, int end, ElementProxy parent): void
+    -getNextToken(XMLTokenizer tokenizer): XMLToken
+    -skipElement(XMLTokenizer tokenizer): int
+}
+
+interface DOMBuilder {
+    +getResult(): Document
+    +buildDocument(): void
+    +buildElementStart(String tagName): void
+    +buildElementEnd(): void
+    +buildAttribute(String name, String value): void
+    +buildText(String text): void
+    +isEmpty(): boolean
+}
+
+class ConcreteDOMBuilder {
+    - factory: Document
+    - document: Document
+    -root: Element
+    -elementStack: Stack<Element>
+    +ConcreteDOMBuilder(Document factory)
+    +getResult(): Document
+    +buildDocument(): void
+    +buildElementStart(String tagName): void
+    +buildElementEnd(): void
+    +buildAttribute(String name, String value): void
+    +buildText(String text): void
+    +isEmpty(): boolean
+}
+
+class XMLTokenizer {
+    +tokens: List<XMLToken>
+    -setTokensList(): void
+    -addToTokens(): void
+}
+note right of XMLTokenizer
+Only including functions/items added for this week's assignment. All other class functionality remained unchanged.
+end note
+
+'PROXY PATTERN
+class ElementProxy {
+    -realElement: edu.jhu.apl.patterns_class.dom.Element
+    -startToken: int
+    -endToken: int
+    -tagName: String
+    -childrenLoaded: boolean
+    -tokenizer: XMLTokenizer
+    +ElementProxy(String tagName, int tokenNum, edu.jhu.apl.patterns_class.dom.Document document, XMLTokenizer tokenizer)
+    -setRealElement(): void
+    -loadChildren(): void
+}
+note right of ElementProxy
+Only including functions relevant to Proxy pattern.
+end note
+
+XMLTokenizer ..> DOMDirectorSingleton : uses
+XMLTokenizer ..> DOMBuilder : has-a
+DOMDirectorSingleton ..> XMLTokenizer : uses
+DOMDirectorSingleton ..> DOMBuilder : uses
+ConcreteDOMBuilder --|> DOMBuilder
+ConcreteDOMBuilder --> IDoc : creates
+ConcreteDOMBuilder ..> IDoc : uses
+
+Element --|> IElement
+ElementProxy --|> IElement
+ElementProxy ..> Element : has-a
+
+@enduml

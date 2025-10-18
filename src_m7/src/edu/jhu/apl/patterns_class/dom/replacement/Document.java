@@ -1,12 +1,10 @@
 package edu.jhu.apl.patterns_class.dom.replacement;
 
-// Abstract Factory
 public interface Document extends Node
 {
 	//
 	// Implemented Document members.
 	//
-	// +CreateProductA, +CreateProductB, etc.
 	public Element createElement(String tagName) throws org.w3c.dom.DOMException;
 	public Text createTextNode(String data);
 	public Attr createAttribute(String name) throws org.w3c.dom.DOMException;

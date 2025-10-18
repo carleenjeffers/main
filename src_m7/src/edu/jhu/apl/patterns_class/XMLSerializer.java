@@ -1,24 +1,15 @@
 package edu.jhu.apl.patterns_class;
 
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.stream.IntStream;
-
 public class XMLSerializer
 {
-	// Using Java Idiom for writing text to a file:
-	// https://www.nayuki.io/page/good-java-idioms#writing-text-file
 	java.io.File		file			= null;
-	PrintWriter	writer			= null;
+	java.io.BufferedWriter	writer			= null;
 	int			indentationLevel	= 0;
 
 	public XMLSerializer(String filename) throws java.io.FileNotFoundException
 	{
 		file		= new java.io.File(filename);
-		writer      = new PrintWriter(new OutputStreamWriter(new FileOutputStream(file)));
+		writer		= new java.io.BufferedWriter(new java.io.OutputStreamWriter(new java.io.FileOutputStream(file)));
 	}
 
 	public void close() throws java.io.IOException
@@ -28,10 +19,8 @@ public class XMLSerializer
 
 	private void prettyIndentation() throws java.io.IOException
 	{
-		// Using Java Idiom "replace for loop with Stream"
-		// https://medium.com/@cleanCompile/10-java-idioms-every-developer-should-know-by-now-00208336dec6
-		IntStream.range(0, indentationLevel)
-         .forEach(_ -> writer.print("\t"));
+		for (int i = 0; i < indentationLevel; i++)
+			writer.write("\t");
 	}
 
 	//
@@ -43,14 +32,14 @@ public class XMLSerializer
 	{
 		if (node instanceof edu.jhu.apl.patterns_class.dom.Document)
 		{
-			writer.print("<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			writer.print("\n");
+			writer.write("<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.write("\n");
 			serializePretty(((edu.jhu.apl.patterns_class.dom.replacement.Document )node).getDocumentElement());
 		}
 		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Element)
 		{
 			prettyIndentation();
-			writer.print("<" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName());
+			writer.write("<" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName());
 
 			int	attrCount	= 0;
 
@@ -66,17 +55,17 @@ public class XMLSerializer
 			}
 
 			if (attrCount > 0)
-				writer.print(" ");
+				writer.write(" ");
 
 			if (!((edu.jhu.apl.patterns_class.dom.NodeList )node.getChildNodes()).listIterator(0).hasNext())
 			{
-				writer.print("/>");
-				writer.print("\n");
+				writer.write("/>");
+				writer.write("\n");
 			}
 			else
 			{
-				writer.print(">");
-				writer.print("\n");
+				writer.write(">");
+				writer.write("\n");
 				indentationLevel++;
 
 				for (java.util.ListIterator i =
@@ -93,20 +82,20 @@ public class XMLSerializer
 
 				indentationLevel--;
 				prettyIndentation();
-				writer.print("</" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName() + ">");
-				writer.print("\n");
+				writer.write("</" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName() + ">");
+				writer.write("\n");
 			}
 		}
 		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Attr)
 		{
-			writer.print(" " + ((edu.jhu.apl.patterns_class.dom.replacement.Attr )node).getName() + "=\"" +
+			writer.write(" " + ((edu.jhu.apl.patterns_class.dom.replacement.Attr )node).getName() + "=\"" +
 			  ((edu.jhu.apl.patterns_class.dom.replacement.Attr )node).getValue() + "\"");
 		}
 		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Text)
 		{
 			prettyIndentation();
-			writer.print(((edu.jhu.apl.patterns_class.dom.replacement.Text )node).getData());
-			writer.print("\n");
+			writer.write(((edu.jhu.apl.patterns_class.dom.replacement.Text )node).getData());
+			writer.write("\n");
 		}
 	}
 
@@ -114,12 +103,12 @@ public class XMLSerializer
 	{
 		if (node instanceof edu.jhu.apl.patterns_class.dom.Document)
 		{
-			writer.print("<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			writer.write("<? xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			serializeMinimal(((edu.jhu.apl.patterns_class.dom.replacement.Document )node).getDocumentElement());
 		}
 		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Element)
 		{
-			writer.print("<" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName());
+			writer.write("<" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName());
 
 			for (java.util.ListIterator i =
 			  ((edu.jhu.apl.patterns_class.dom.NodeList )node.getAttributes()).listIterator(0);
@@ -132,10 +121,10 @@ public class XMLSerializer
 			}
 
 			if (!((edu.jhu.apl.patterns_class.dom.NodeList )node.getChildNodes()).listIterator(0).hasNext())
-				writer.print("/>");
+				writer.write("/>");
 			else
 			{
-				writer.print(">");
+				writer.write(">");
 
 				for (java.util.ListIterator i =
 				  ((edu.jhu.apl.patterns_class.dom.NodeList )node.getChildNodes()).listIterator(0);
@@ -149,17 +138,17 @@ public class XMLSerializer
 						serializeMinimal(child);
 				}
 
-				writer.print("</" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName() + ">");
+				writer.write("</" + ((edu.jhu.apl.patterns_class.dom.replacement.Element )node).getTagName() + ">");
 			}
 		}
 		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Attr)
 		{
-			writer.print(" " + ((edu.jhu.apl.patterns_class.dom.replacement.Attr )node).getName() + "=\"" +
+			writer.write(" " + ((edu.jhu.apl.patterns_class.dom.replacement.Attr )node).getName() + "=\"" +
 			  ((edu.jhu.apl.patterns_class.dom.replacement.Attr )node).getValue() + "\"");
 		}
 		else if (node instanceof edu.jhu.apl.patterns_class.dom.replacement.Text)
 		{
-			writer.print(((edu.jhu.apl.patterns_class.dom.replacement.Text )node).getData());
+			writer.write(((edu.jhu.apl.patterns_class.dom.replacement.Text )node).getData());
 		}
 	}
 
@@ -211,36 +200,19 @@ public class XMLSerializer
 		//
 		// Serialize
 		//
-
-		// restructured using Java idiom CheckDontCatch
-		// https://wiki.c2.com/?CheckDontCatch
-		// only catching at top level (main function)
-		try {
-			doSerialize(args[0], args[1], document);
-		} catch (java.io.IOException e)
+		try
 		{
-			System.out.println("Error writing file: " + e.getMessage());
-			System.exit(0);
+			XMLSerializer	xmlSerializer	= new XMLSerializer(args[0]);
+			xmlSerializer.serializePretty(document);
+			xmlSerializer.close();
+			xmlSerializer	= new XMLSerializer(args[1]);
+			xmlSerializer.serializeMinimal(document);
+			xmlSerializer.close();
 		}
-		
-	}
-
-	private static void doSerialize(String filePretty, String fileMinimal, edu.jhu.apl.patterns_class.dom.replacement.Document document) throws java.io.IOException {
-
-		// do check part of CheckDontCatch idiom
-		Path prettyPath = Path.of(filePretty);
-		Path minimalPath = Path.of(fileMinimal);
-
-		if (!Files.exists(prettyPath) || !Files.exists(minimalPath)) {
-			System.out.println("File does not exist. Exiting");
-			return;
+		catch (java.io.IOException e)
+		{
+			System.out.println("Error writing file.");
+			e.printStackTrace();
 		}
-		
-		XMLSerializer	xmlSerializer	= new XMLSerializer(filePretty);
-		xmlSerializer.serializePretty(document);
-		xmlSerializer.close();
-		xmlSerializer	= new XMLSerializer(fileMinimal);
-		xmlSerializer.serializeMinimal(document);
-		xmlSerializer.close();
 	}
 }

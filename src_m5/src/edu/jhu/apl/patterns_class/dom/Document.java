@@ -1,6 +1,7 @@
 package edu.jhu.apl.patterns_class.dom;
 
 import edu.jhu.apl.patterns_class.XMLSerializer;
+import edu.jhu.apl.patterns_class.XMLTokenizer;
 
 // Concrete Factory
 public class Document extends Node implements edu.jhu.apl.patterns_class.dom.replacement.Document
@@ -33,6 +34,8 @@ public class Document extends Node implements edu.jhu.apl.patterns_class.dom.rep
 	//
 	public edu.jhu.apl.patterns_class.dom.replacement.Element createElement(String tagName) throws org.w3c.dom.DOMException
 	  {return new Element(tagName,this);}
+	public edu.jhu.apl.patterns_class.dom.replacement.Element createElementProxy(String tagName, int tokenNum, XMLTokenizer tokenizer) throws org.w3c.dom.DOMException
+	  {return new ElementProxy(tagName, tokenNum,this, tokenizer);}
 	public edu.jhu.apl.patterns_class.dom.replacement.Text createTextNode(String data) { return new Text(data, this); }
 	public edu.jhu.apl.patterns_class.dom.replacement.Attr createAttribute(String name) throws org.w3c.dom.DOMException
 	  { return new Attr(name, this); }

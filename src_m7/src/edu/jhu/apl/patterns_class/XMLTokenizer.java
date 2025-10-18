@@ -1,8 +1,5 @@
 package edu.jhu.apl.patterns_class;
 
-import edu.jhu.apl.patterns_class.builder.*;
-import edu.jhu.apl.patterns_class.dom.Document;
-
 public class XMLTokenizer
 {
 	private java.io.BufferedReader	reader		= null;
@@ -105,13 +102,6 @@ public class XMLTokenizer
 				return "UNKNOWN_TOKEN";
 			}
 		}
-	}
-
-	private String file;
-
-	// getter
-	public String getFile() {
-		return this.file;
 	}
 
 	public XMLTokenizer(String filename) throws java.io.FileNotFoundException
@@ -282,7 +272,6 @@ public class XMLTokenizer
 		space_to_eol_matcher		= space_to_eol_matcher.reset(line);
 	}
 
-	// Client for Builder
 	public static void main(String args[])
 	{
 		for (int i = 0; i < args.length; i++)
@@ -299,25 +288,25 @@ public class XMLTokenizer
 				continue;
 			}
 
+			XMLTokenizer.XMLToken	token		= null;
+
 			System.out.println("File:  '" + args[i] + "'");
 
-			// Builder pattern
-			DOMBuilder builder = new ConcreteDOMBuilder(new Document());
-			DOMDirector director = new DOMDirector();
-			director.buildDOMTree(builder, tokenizer);
+			do
+			{
+				try
+				{
+					token	= tokenizer.getNextToken();
+				}
+				catch (java.io.IOException e)
+				{
+					System.out.println("IO Exception parsing file '" + args[i] + "':  " + e);
+					e.printStackTrace();
+				}
 
-			// now that DOM tree is built we test by writing the built DOM tree in builderTest.txt
-			edu.jhu.apl.patterns_class.dom.replacement.Node root = builder.getResult();
-
-			try {
-				XMLSerializer serializer = new XMLSerializer("builderTest.txt");
-				serializer.serializePretty(root);
-				serializer.close();
-				System.out.print("Successfully built DOM tree");
-			} catch (Exception e) {
-				System.out.println("failed writing DOM Tree to file:");
-				e.printStackTrace();
-			}
+				System.out.println("\tLine " + tokenizer.getLineNumber() + ":  " +
+				  token + " = '" + (token.getToken() == null ? "" : token.getToken()) + "'");
+			} while (token.getTokenType() != XMLToken.NULL);
 		}
 	}
 }

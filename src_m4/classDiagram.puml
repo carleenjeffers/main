@@ -1,0 +1,101 @@
+@startuml classDiagramMod4
+top to bottom direction
+
+'Template Method
+interface Node {
+    +serializeMinimal(java.io.BufferedWriter writer): void
+    +serializePretty(XMLSerializer.XMLSerializerContext ctx): void
+    +writeOpenTags(java.io.BufferedWriter writer): void
+    +writeAttributes(java.io.BufferedWriter writer): void
+    +writeChildren(java.io.BufferedWriter writer): void
+    +writeClosingTags(java.io.BufferedWriter writer): void
+    +formatStart(XMLSerializer.XMLSerializerContext ctx): void
+    +writeAttributesPretty(XMLSerializer.XMLSerializerContext ctx): void
+    +writeChildrenPretty(XMLSerializer.XMLSerializerContext ctx): void
+    +formatEnd(XMLSerializer.XMLSerializerContext ctx): void
+}
+note right of Node
+Only including functions added for this week's assignment. All other class functionality remained unchanged.
+end note
+
+class "Document" as CDoc {
+    +writeOpenTags(java.io.BufferedWriter writer): void
+    +writeChildren(java.io.BufferedWriter writer): void
+    +writeChildrenPretty(XMLSerializer.XMLSerializerContext ctx): void
+    +createElement(String tagName): Element
+    +createTextNode(String data): Text
+    +createAttribute(String name): Attr
+}
+class Element {
+    +writeOpenTags(java.io.BufferedWriter writer): void
+    +writeAttributes(java.io.BufferedWriter writer): void
+    +writeChildren(java.io.BufferedWriter writer): void
+    +writeClosingTags(java.io.BufferedWriter writer): void
+    +formatStart(XMLSerializer.XMLSerializerContext ctx): void
+    +writeAttributesPretty(XMLSerializer.XMLSerializerContext ctx): void
+    +writeChildrenPretty(XMLSerializer.XMLSerializerContext ctx): void
+    +formatEnd(XMLSerializer.XMLSerializerContext ctx): void
+}
+class Text {
+    +writeOpenTags(java.io.BufferedWriter writer): void
+    +formatStart(XMLSerializer.XMLSerializerContext ctx): void
+    +formatEnd(XMLSerializer.XMLSerializerContext ctx): void
+}
+class Attr {
+    +writeOpenTags(java.io.BufferedWriter writer): void
+}
+
+'Abstract Factory
+interface "Document" as IDoc {
+    +createElement(String tagName): Element
+    +createTextNode(String data): Text
+    +createAttribute(String name): Attr
+}
+
+'Builder
+class DOMDirector {
+    +buildDOMTree(DOMBuilder builder, XMLTokenizer tokenizer): void
+    -getNextToken(XMLTokenizer tokenizer): XMLToken
+}
+
+interface DOMBuilder {
+    +getResult(): Document
+    +buildDocument(): void
+    +buildElementStart(String tagName): void
+    +buildElementEnd(): void
+    +buildAttribute(String name, String value): void
+    +buildText(String text): void
+    +isEmpty(): boolean
+}
+
+class ConcreteDOMBuilder {
+    - factory: Document
+    - document: Document
+    -root: Element
+    -elementStack: Stack<Element>
+    +ConcreteDOMBuilder(Document factory)
+    +getResult(): Document
+    +buildDocument(): void
+    +buildElementStart(String tagName): void
+    +buildElementEnd(): void
+    +buildAttribute(String name, String value): void
+    +buildText(String text): void
+    +isEmpty(): boolean
+}
+
+
+'Relationships
+IDoc --|> Node
+Element --|> Node
+Attr --|> Node
+Text --|> Node
+CDoc --|> IDoc
+
+XMLTokenizer ..> DOMDirector : uses
+DOMDirector ..> XMLTokenizer : uses
+DOMDirector ..> DOMBuilder : uses
+ConcreteDOMBuilder --|> DOMBuilder
+ConcreteDOMBuilder --> IDoc : creates
+ConcreteDOMBuilder ..> IDoc : uses
+
+@enduml
